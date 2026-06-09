@@ -1,0 +1,15 @@
+{
+	"name": "adf-subsidio-bolivia-dwh",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "brazilsouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "38514ba0-3b3d-4268-aabd-096b136eb6ae",
+		"tenantId": "cc28633f-12b8-46cb-bc15-951dae239b4d"
+	}
+}
