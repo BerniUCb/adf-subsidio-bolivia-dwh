@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-subsidio-bolivia-dwh"
+		},
+		"LS_Destino_DWH_password": {
+			"value": ""
+		},
+		"LS_Destino_DWH_properties_typeProperties_server": {
+			"value": "server-subsidio-bolivia-dwh.database.windows.net"
+		},
+		"LS_Destino_DWH_properties_typeProperties_database": {
+			"value": "dw-subsidio-bolivia"
+		},
+		"LS_Destino_DWH_properties_typeProperties_userName": {
+			"value": "adminsubsidio"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

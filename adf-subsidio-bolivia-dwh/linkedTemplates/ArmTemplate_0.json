@@ -1,0 +1,54 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "adf-subsidio-bolivia-dwh"
+		},
+		"LS_Destino_DWH_password": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"password\"de \"LS_Destino_DWH\""
+		},
+		"LS_Destino_DWH_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "server-subsidio-bolivia-dwh.database.windows.net"
+		},
+		"LS_Destino_DWH_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dw-subsidio-bolivia"
+		},
+		"LS_Destino_DWH_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsubsidio"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Destino_DWH')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_Destino_DWH_properties_typeProperties_server')]",
+					"database": "[parameters('LS_Destino_DWH_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_Destino_DWH_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_Destino_DWH_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
