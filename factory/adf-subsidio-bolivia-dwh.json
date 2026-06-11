@@ -9,7 +9,7 @@
 	"location": "brazilsouth",
 	"identity": {
 		"type": "SystemAssigned",
-		"principalId": "38514ba0-3b3d-4268-aabd-096b136eb6ae",
+		"principalId": "b782f1d1-21f9-48fb-b125-30af13bb73e0",
 		"tenantId": "cc28633f-12b8-46cb-bc15-951dae239b4d"
 	}
 }
