@@ -5,10 +5,10 @@
 		"factoryName": {
 			"value": "adf-subsidio-bolivia-dwh"
 		},
-		"LS_Destino_DWH_password": {
+		"LS_BlobStorage_connectionString": {
 			"value": ""
 		},
-		"LS_BlobStorage_connectionString": {
+		"LS_Destino_DWH_password": {
 			"value": ""
 		},
 		"LS_Destino_DWH_properties_typeProperties_server": {
