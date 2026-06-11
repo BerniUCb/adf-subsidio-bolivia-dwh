@@ -1,0 +1,68 @@
+{
+	"name": "df_bronce",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceSegipPersonas"
+				},
+				{
+					"name": "sourceSupInscripciones"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkSegipPersonas"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ci as string,",
+				"          nombres as string,",
+				"          ap_paterno as string,",
+				"          ap_materno as string,",
+				"          fecha_nacimiento as date,",
+				"          genero as string,",
+				"          estado_civil as string,",
+				"          municipio as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     container: 'bronze-segip',",
+				"     fileName: 'personas.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> sourceSegipPersonas",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> sourceSupInscripciones",
+				"sourceSegipPersonas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'segip_personas',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSegipPersonas"
+			]
+		}
+	}
+}
