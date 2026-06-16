@@ -1,0 +1,75 @@
+{
+	"name": "df_gold_dim_establecimiento",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourcePlataEstablecimientos"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldDimEstablecimiento"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Establecieinto"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          establecimiento_id as integer,",
+				"          codigo_snis as string,",
+				"          nombre as string,",
+				"          tipo as string,",
+				"          nivel_atencion as string,",
+				"          municipio as string,",
+				"          departamento as string,",
+				"          red_salud as string,",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_establecimientos',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourcePlataEstablecimientos",
+				"sourcePlataEstablecimientos aggregate(groupBy(establecimiento_id),",
+				"     codigo_snis = first(codigo_snis),",
+				"          nombre = first(nombre),",
+				"          tipo = first(tipo),",
+				"          nivel_atencion = first(nivel_atencion),",
+				"          municipio = first(municipio),",
+				"          departamento = first(departamento),",
+				"          estado = first(estado)) ~> Establecieinto",
+				"Establecieinto sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'oro',",
+				"     tableName: 'Dim_Establecimiento',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkGoldDimEstablecimiento"
+			]
+		}
+	}
+}
