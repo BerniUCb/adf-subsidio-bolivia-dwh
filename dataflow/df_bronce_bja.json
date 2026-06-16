@@ -5,41 +5,89 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaInscripciones"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaControlesPrenatales"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaPartos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaControlesPediatricos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaPagos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_BlobStorage",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sourceBjaEstablecimientos"
 				}
 			],
 			"sinks": [
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaInscripciones"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaControlesPrenatales"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaPartos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaControlesPediatricos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaPagos"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sinkBjaEstablecimientos"
 				}
 			],
@@ -53,8 +101,11 @@
 				"          semana_gestacion as string,",
 				"          estado as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'inscripciones.csv',",
@@ -73,8 +124,11 @@
 				"          presion_arterial as string,",
 				"          resultado as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'controles-prenatales.csv',",
@@ -92,8 +146,11 @@
 				"          peso_nacimiento_kg as string,",
 				"          talla_nacimiento_cm as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'partos.csv',",
@@ -113,8 +170,11 @@
 				"          vacuna_aplicada as string,",
 				"          resultado as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'controles-pediatricos.csv',",
@@ -132,8 +192,11 @@
 				"          canal_pago as string,",
 				"          nro_comprobante as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'pagos.csv',",
@@ -152,8 +215,11 @@
 				"          red_salud as string,",
 				"          estado as string",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'BJA',",
 				"     fileName: 'establecimientos.csv',",
@@ -163,46 +229,82 @@
 				"     columnNamesAsHeader: true) ~> sourceBjaEstablecimientos",
 				"sourceBjaInscripciones sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaInscripciones",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_inscripciones',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaInscripciones",
 				"sourceBjaControlesPrenatales sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaControlesPrenatales",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_controles_prenatales',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaControlesPrenatales",
 				"sourceBjaPartos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaPartos",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_partos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaPartos",
 				"sourceBjaControlesPediatricos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaControlesPediatricos",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_controles_pediatricos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaControlesPediatricos",
 				"sourceBjaPagos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaPagos",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_pagos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaPagos",
 				"sourceBjaEstablecimientos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     format: 'table',",
 				"     store: 'sqlserver',",
-				"     schemaName: 'bronce') ~> sinkBjaEstablecimientos"
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_establecimientos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkBjaEstablecimientos"
 			]
 		}
 	}
