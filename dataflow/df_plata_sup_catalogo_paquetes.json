@@ -1,0 +1,65 @@
+{
+	"name": "df_plata_sup_catalogo_paquetes",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeSupCatalogoPaquetes"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkPlatasSupCatalogoPaquetes"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaSupCatalogoPaquetes"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          paquete_id as string,",
+				"          nombre as string,",
+				"          contenido as string,",
+				"          peso_estandar_kg as string,",
+				"          costo_estimado_bs as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'sup_catalogo_paquetes',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupCatalogoPaquetes",
+				"sourceBronzeSupCatalogoPaquetes derive(paquete_id = toInteger(paquete_id),",
+				"          nombre = initCap(trim(nombre)),",
+				"          contenido = trim(contenido),",
+				"          peso_estandar_kg = toDecimal(peso_estandar_kg, 5, 2),",
+				"          costo_estimado_bs = toDecimal(costo_estimado_bs, 10, 2)) ~> limpiezaSupCatalogoPaquetes",
+				"limpiezaSupCatalogoPaquetes sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'sup_catalogo_paquetes',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupCatalogoPaquetes"
+			]
+		}
+	}
+}
