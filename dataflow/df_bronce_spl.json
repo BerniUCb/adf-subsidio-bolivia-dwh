@@ -5,89 +5,41 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplAfiliaciones"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplCertificadosMedicos"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplAsignacionesMensuales"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplEntregasAgencia"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplEntregasSupermercado"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSplEmpleadores"
 				}
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplAfiliaciones"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplCertificadosMedicos"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplAsignacionesMensuales"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplEntregasAgencia"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplEntregasSupermercado"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSplEmpleadores"
 				}
 			],
@@ -103,11 +55,8 @@
 				"          tipo_subsidio as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_afiliaciones.csv',",
@@ -124,11 +73,8 @@
 				"          medico_responsable as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_certificados_medicos.csv',",
@@ -146,11 +92,8 @@
 				"          monto_carnes as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_asignaciones_mensuales.csv',",
@@ -168,11 +111,8 @@
 				"          peso_kg as string,",
 				"          punto_entrega as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_entregas_agencia.csv',",
@@ -190,11 +130,8 @@
 				"          cantidad_kg as string,",
 				"          monto_bs as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_entregas_supermercado.csv',",
@@ -210,11 +147,8 @@
 				"          nro_patronal as string,",
 				"          municipio as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SPL',",
 				"     fileName: 'spl_empleadores.csv',",
@@ -224,82 +158,46 @@
 				"     columnNamesAsHeader: true) ~> sourceSplEmpleadores",
 				"sourceSplAfiliaciones sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_afiliaciones',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplAfiliaciones",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplAfiliaciones",
 				"sourceSplCertificadosMedicos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_certificados_medicos',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplCertificadosMedicos",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplCertificadosMedicos",
 				"sourceSplAsignacionesMensuales sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_asignaciones_mensuales',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplAsignacionesMensuales",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplAsignacionesMensuales",
 				"sourceSplEntregasAgencia sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_entregas_agencia',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplEntregasAgencia",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplEntregasAgencia",
 				"sourceSplEntregasSupermercado sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_entregas_supermercado',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplEntregasSupermercado",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplEntregasSupermercado",
 				"sourceSplEmpleadores sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'spl_empleadores',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSplEmpleadores"
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSplEmpleadores"
 			]
 		}
 	}

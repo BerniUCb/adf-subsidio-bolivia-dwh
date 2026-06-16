@@ -5,89 +5,41 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemEmpresas"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemPlantas"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemProductos"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemProduccion"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemControlCalidad"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSedemInventario"
 				}
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemEmpresas"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemPlantas"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemProductos"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemProduccion"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemControlCalidad"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSedemInventario"
 				}
 			],
@@ -103,11 +55,8 @@
 				"          departamento as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'empresas.csv',",
@@ -124,11 +73,8 @@
 				"          tipo as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'plantas.csv',",
@@ -144,11 +90,8 @@
 				"          presentacion as string,",
 				"          estado as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'productos.csv',",
@@ -171,11 +114,8 @@
 				"          estado as string,",
 				"          fecha_vencimiento as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'produccion.csv',",
@@ -197,11 +137,8 @@
 				"          cumple as string,",
 				"          inspector as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'control-calidad.csv',",
@@ -221,11 +158,8 @@
 				"          fecha_ultimo_movimiento as string,",
 				"          almacen as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEDEM',",
 				"     fileName: 'inventario.csv',",
@@ -235,82 +169,46 @@
 				"     columnNamesAsHeader: true) ~> sourceSedemInventario",
 				"sourceSedemEmpresas sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_empresas',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemEmpresas",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemEmpresas",
 				"sourceSedemPlantas sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_plantas',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemPlantas",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemPlantas",
 				"sourceSedemProductos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_productos',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemProductos",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemProductos",
 				"sourceSedemProduccion sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_produccion',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemProduccion",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemProduccion",
 				"sourceSedemControlCalidad sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_control_calidad',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemControlCalidad",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemControlCalidad",
 				"sourceSedemInventario sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'sedem_inventario',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSedemInventario"
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSedemInventario"
 			]
 		}
 	}

@@ -5,19 +5,11 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"linkedService": {
-						"referenceName": "LS_BlobStorage",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sourceSegipPersonas"
 				}
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "LS_Destino_DWH",
-						"type": "LinkedServiceReference"
-					},
 					"name": "sinkSegipPersonas"
 				}
 			],
@@ -40,11 +32,8 @@
 				"          municipio_residencia as string,",
 				"          fecha_emision as string",
 				"     ),",
-				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
 				"     container: 'bronze',",
 				"     folderPath: 'SEGIP',",
 				"     fileName: 'personas.csv',",
@@ -54,17 +43,11 @@
 				"     columnNamesAsHeader: true) ~> sourceSegipPersonas",
 				"sourceSegipPersonas sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table',",
-				"     store: 'sqlserver',",
-				"     schemaName: 'bronce',",
-				"     tableName: 'segip_personas',",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     deletable: false,",
-				"     upsertable: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sinkSegipPersonas"
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce') ~> sinkSegipPersonas"
 			]
 		}
 	}
