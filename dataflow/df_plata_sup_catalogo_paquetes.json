@@ -1,6 +1,9 @@
 {
 	"name": "df_plata_sup_catalogo_paquetes",
 	"properties": {
+		"folder": {
+			"name": "df_plata"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

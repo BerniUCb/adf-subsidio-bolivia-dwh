@@ -1,6 +1,9 @@
 {
 	"name": "df_plata_bja_controles_prenatales",
 	"properties": {
+		"folder": {
+			"name": "df_plata"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

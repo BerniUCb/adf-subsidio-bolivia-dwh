@@ -1,6 +1,9 @@
 {
 	"name": "df_plata_sup_entregas",
 	"properties": {
+		"folder": {
+			"name": "df_plata"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
