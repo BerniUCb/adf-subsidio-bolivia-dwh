@@ -6,7 +6,7 @@
 		"type": "AzureBlobStorage",
 		"typeProperties": {
 			"connectionString": "DefaultEndpointsProtocol=https;AccountName=stsubsidioboliviadwh;EndpointSuffix=core.windows.net;",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEQzNUMxOEVDLTI3MDQtNEQ0OC05NjdDLTIxOUYyNzg5QjU0QV8zMmVmZjc0Yi1hYTZkLTRiYTMtOTFjOC1hNzlkNzljNDM1ZmIiDQp9"
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEIyMEZCNjhELUY2QkItNDEzNC1BQkQ1LTg1QTQ2MUUxQzhCMF9hMWY3ZmM3OS1iNDVlLTQ1YjAtODIyZS0zZDMxMjhiZDYzMWEiDQp9"
 		}
 	}
 }
