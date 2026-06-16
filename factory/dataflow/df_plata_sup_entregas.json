@@ -1,0 +1,75 @@
+{
+	"name": "df_plata_sup_entregas",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeSupEntregas"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkPlatasSupEntregas"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaSupEntregas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          entrega_id as string,",
+				"          boleta_id as string,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as string,",
+				"          paquete_id as string,",
+				"          paquete_nombre as string,",
+				"          fecha_entrega as string,",
+				"          lote_produccion as string,",
+				"          peso_paquete_kg as string,",
+				"          fecha_proxima_entrega as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'sup_entregas',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupEntregas",
+				"sourceBronzeSupEntregas derive(entrega_id = toInteger(entrega_id),",
+				"          boleta_id = toInteger(boleta_id),",
+				"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+				"          establecimiento_id = toInteger(establecimiento_id),",
+				"          paquete_id = toInteger(paquete_id),",
+				"          paquete_nombre = initCap(trim(paquete_nombre)),",
+				"          fecha_entrega = coalesce(toDate(fecha_entrega,'yyyy-MM-dd'), toDate(fecha_entrega,'MM/dd/yyyy'), toDate(fecha_entrega,'dd/MM/yyyy')),",
+				"          lote_produccion = iif(isNull(lote_produccion), toString(null()), trim(lote_produccion)),",
+				"          peso_paquete_kg = iif(isNull(peso_paquete_kg), toDecimal(null()), toDecimal(peso_paquete_kg, 5, 2)),",
+				"          fecha_proxima_entrega = iif(isNull(fecha_proxima_entrega), toDate(null()), coalesce(toDate(fecha_proxima_entrega,'yyyy-MM-dd'), toDate(fecha_proxima_entrega,'MM/dd/yyyy'), toDate(fecha_proxima_entrega,'dd/MM/yyyy')))) ~> limpiezaSupEntregas",
+				"limpiezaSupEntregas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'sup_entregas',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupEntregas"
+			]
+		}
+	}
+}

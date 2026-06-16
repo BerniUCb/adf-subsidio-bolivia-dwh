@@ -1,0 +1,71 @@
+{
+	"name": "df_plata_sup_controles",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeSupControles"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaSupControles"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          control_id as string,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as string,",
+				"          nro_control as string,",
+				"          fecha_control as string,",
+				"          semana_gestacion as string,",
+				"          peso_madre_kg as string,",
+				"          presion_arterial as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'sup_controles',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupControles",
+				"sourceBronzeSupControles derive(control_id = toInteger(control_id),",
+				"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+				"          establecimiento_id = toInteger(establecimiento_id),",
+				"          nro_control = toInteger(nro_control),",
+				"          fecha_control = coalesce(toDate(fecha_control,'yyyy-MM-dd'), toDate(fecha_control,'MM/dd/yyyy'), toDate(fecha_control,'dd/MM/yyyy')),",
+				"          semana_gestacion = iif(isNull(semana_gestacion), toInteger(null()), toInteger(semana_gestacion)),",
+				"          peso_madre_kg = iif(isNull(peso_madre_kg), toDecimal(null()), toDecimal(peso_madre_kg, 5, 2)),",
+				"          presion_arterial = iif(isNull(presion_arterial), toString(null()), trim(presion_arterial))) ~> limpiezaSupControles",
+				"limpiezaSupControles sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'sup_controles',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

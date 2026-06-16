@@ -1,0 +1,75 @@
+{
+	"name": "df_plata_bja_controles_pediatricos",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeBjaControlesPediatricos"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkPlatasBjaControlesPediatricos"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaBjaControlesPediatricos"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          control_pediatrico_id as string,",
+				"          ci_nino as string,",
+				"          ci_madre as string,",
+				"          establecimiento_id as string,",
+				"          nro_control as string,",
+				"          fecha_control as string,",
+				"          peso_nino_kg as string,",
+				"          talla_nino_cm as string,",
+				"          vacuna_aplicada as string,",
+				"          resultado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_controles_pediatricos',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaControlesPediatricos",
+				"sourceBronzeBjaControlesPediatricos derive(control_pediatrico_id = toInteger(control_pediatrico_id),",
+				"          ci_nino = regexReplace(trim(ci_nino), '-', ''),",
+				"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
+				"          establecimiento_id = toInteger(establecimiento_id),",
+				"          nro_control = toInteger(nro_control),",
+				"          fecha_control = toDate(fecha_control, 'yyyy-MM-dd'),",
+				"          peso_nino_kg = iif(isNull(peso_nino_kg), toDecimal(null()), toDecimal(peso_nino_kg, 5, 2)),",
+				"          talla_nino_cm = iif(isNull(talla_nino_cm), toDecimal(null()), toDecimal(talla_nino_cm, 5, 2)),",
+				"          vacuna_aplicada = iif(isNull(vacuna_aplicada), toString(null()), initCap(trim(vacuna_aplicada))),",
+				"          resultado = iif(isNull(resultado), toString(null()), initCap(trim(resultado)))) ~> limpiezaBjaControlesPediatricos",
+				"limpiezaBjaControlesPediatricos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_controles_pediatricos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaControlesPediatricos"
+			]
+		}
+	}
+}
