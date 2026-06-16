@@ -1,0 +1,71 @@
+{
+	"name": "df_plata_bja_partos",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeBjaPartos"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkPlatasBjaPartos"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaBjaPartos"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          parto_id as string,",
+				"          ci_madre as string,",
+				"          ci_recien_nacido as string,",
+				"          establecimiento_id as string,",
+				"          fecha_parto as string,",
+				"          tipo_parto as string,",
+				"          peso_nacimiento_kg as string,",
+				"          talla_nacimiento_cm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_partos',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPartos",
+				"sourceBronzeBjaPartos derive(parto_id = toInteger(parto_id),",
+				"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
+				"          ci_recien_nacido = trim(ci_recien_nacido),",
+				"          establecimiento_id = toInteger(establecimiento_id),",
+				"          fecha_parto = toDate(fecha_parto, 'yyyy-MM-dd'),",
+				"          tipo_parto = iif(isNull(tipo_parto), toString(null()), initCap(trim(tipo_parto))),",
+				"          peso_nacimiento_kg = toDecimal(peso_nacimiento_kg, 5, 2),",
+				"          talla_nacimiento_cm = iif(isNull(talla_nacimiento_cm), toDecimal(null()), toDecimal(talla_nacimiento_cm, 5, 2))) ~> limpiezaBjaPartos",
+				"limpiezaBjaPartos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_partos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPartos"
+			]
+		}
+	}
+}

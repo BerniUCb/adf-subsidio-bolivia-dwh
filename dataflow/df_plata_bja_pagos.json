@@ -1,0 +1,71 @@
+{
+	"name": "df_plata_bja_pagos",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceBronzeBjaPagos"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkPlatasBjaPagos"
+				}
+			],
+			"transformations": [
+				{
+					"name": "limpiezaBjaPagos"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          pago_id as string,",
+				"          ci_beneficiaria as string,",
+				"          concepto_pago as string,",
+				"          monto_bs as string,",
+				"          fecha_pago as string,",
+				"          estado_pago as string,",
+				"          canal_pago as string,",
+				"          nro_comprobante as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'bronce',",
+				"     tableName: 'bja_pagos',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPagos",
+				"sourceBronzeBjaPagos derive(pago_id = toInteger(pago_id),",
+				"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+				"          concepto_pago = initCap(trim(concepto_pago)),",
+				"          monto_bs = toDecimal(monto_bs, 10, 2),",
+				"          fecha_pago = toDate(fecha_pago, 'yyyy-MM-dd'),",
+				"          estado_pago = initCap(trim(estado_pago)),",
+				"          canal_pago = iif(isNull(canal_pago), toString(null()), initCap(trim(canal_pago))),",
+				"          nro_comprobante = iif(isNull(nro_comprobante), toString(null()), trim(nro_comprobante))) ~> limpiezaBjaPagos",
+				"limpiezaBjaPagos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_pagos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPagos"
+			]
+		}
+	}
+}
