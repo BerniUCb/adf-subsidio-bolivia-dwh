@@ -901,6 +901,466 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_controles_pediatricos')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaControlesPediatricos"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaControlesPediatricos"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaControlesPediatricos"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          control_pediatrico_id as string,",
+						"          ci_nino as string,",
+						"          ci_madre as string,",
+						"          establecimiento_id as string,",
+						"          nro_control as string,",
+						"          fecha_control as string,",
+						"          peso_nino_kg as string,",
+						"          talla_nino_cm as string,",
+						"          vacuna_aplicada as string,",
+						"          resultado as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_controles_pediatricos',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaControlesPediatricos",
+						"sourceBronzeBjaControlesPediatricos derive(control_pediatrico_id = toInteger(control_pediatrico_id),",
+						"          ci_nino = regexReplace(trim(ci_nino), '-', ''),",
+						"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          nro_control = toInteger(nro_control),",
+						"          fecha_control = toDate(fecha_control, 'yyyy-MM-dd'),",
+						"          peso_nino_kg = iif(isNull(peso_nino_kg), toDecimal(null()), toDecimal(peso_nino_kg, 5, 2)),",
+						"          talla_nino_cm = iif(isNull(talla_nino_cm), toDecimal(null()), toDecimal(talla_nino_cm, 5, 2)),",
+						"          vacuna_aplicada = iif(isNull(vacuna_aplicada), toString(null()), initCap(trim(vacuna_aplicada))),",
+						"          resultado = iif(isNull(resultado), toString(null()), initCap(trim(resultado)))) ~> limpiezaBjaControlesPediatricos",
+						"limpiezaBjaControlesPediatricos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_controles_pediatricos',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaControlesPediatricos"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_controles_prenatales')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaControlesPrenatales"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaControlesPrenatales"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaControlesPrenatales"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          control_prenatal_id as string,",
+						"          ci_beneficiaria as string,",
+						"          establecimiento_id as string,",
+						"          nro_control as string,",
+						"          fecha_control as string,",
+						"          semana_gestacion as string,",
+						"          peso_madre_kg as string,",
+						"          presion_arterial as string,",
+						"          resultado as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_controles_prenatales',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaControlesPrenatales",
+						"sourceBronzeBjaControlesPrenatales derive(control_prenatal_id = toInteger(control_prenatal_id),",
+						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          nro_control = toInteger(nro_control),",
+						"          fecha_control = iif(isNull(fecha_control), toDate(null()), toDate(fecha_control, 'yyyy-MM-dd')),",
+						"          semana_gestacion = iif(isNull(semana_gestacion), toInteger(null()), toInteger(semana_gestacion)),",
+						"          peso_madre_kg = iif(isNull(peso_madre_kg), toDecimal(null()), toDecimal(peso_madre_kg, 5, 2)),",
+						"          presion_arterial = iif(isNull(presion_arterial), toString(null()), trim(presion_arterial)),",
+						"          resultado = iif(isNull(resultado), toString(null()), initCap(trim(resultado)))) ~> limpiezaBjaControlesPrenatales",
+						"limpiezaBjaControlesPrenatales sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_controles_prenatales',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaControlesPrenatales"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_establecimientos')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaEstablecimientos"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaEstablecimientos"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaEstablecimientos"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          establecimiento_id as string,",
+						"          codigo_snis as string,",
+						"          nombre as string,",
+						"          tipo as string,",
+						"          nivel_atencion as string,",
+						"          municipio as string,",
+						"          departamento as string,",
+						"          red_salud as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_establecimientos',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaEstablecimientos",
+						"sourceBronzeBjaEstablecimientos derive(establecimiento_id = toInteger(establecimiento_id),",
+						"          codigo_snis = trim(upper(codigo_snis)),",
+						"          nombre = initCap(trim(nombre)),",
+						"          tipo = initCap(trim(tipo)),",
+						"          nivel_atencion = initCap(trim(nivel_atencion)),",
+						"          municipio = initCap(trim(municipio)),",
+						"          departamento = initCap(trim(departamento)),",
+						"          red_salud = iif(isNull(red_salud), toString(null()), initCap(trim(red_salud))),",
+						"          estado = initCap(trim(estado))) ~> limpiezaBjaEstablecimientos",
+						"limpiezaBjaEstablecimientos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_establecimientos',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaEstablecimientos"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_inscripciones')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaInscripciones"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaInscripciones"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaInscripciones"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          inscripcion_id as string,",
+						"          ci_beneficiaria as string,",
+						"          establecimiento_id as string,",
+						"          fecha_inscripcion as string,",
+						"          semana_gestacion as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_inscripciones',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaInscripciones",
+						"sourceBronzeBjaInscripciones derive(inscripcion_id = toInteger(inscripcion_id),",
+						"          ci_beneficiaria = trim(ci_beneficiaria),",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          fecha_inscripcion = toDate(fecha_inscripcion, 'yyyy-MM-dd'),",
+						"          semana_gestacion = toInteger(semana_gestacion),",
+						"          estado = initCap(trim(estado))) ~> limpiezaBjaInscripciones",
+						"limpiezaBjaInscripciones sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_inscripciones',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaInscripciones"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_pagos')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaPagos"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaPagos"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaPagos"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          pago_id as string,",
+						"          ci_beneficiaria as string,",
+						"          concepto_pago as string,",
+						"          monto_bs as string,",
+						"          fecha_pago as string,",
+						"          estado_pago as string,",
+						"          canal_pago as string,",
+						"          nro_comprobante as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_pagos',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPagos",
+						"sourceBronzeBjaPagos derive(pago_id = toInteger(pago_id),",
+						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+						"          concepto_pago = initCap(trim(concepto_pago)),",
+						"          monto_bs = toDecimal(monto_bs, 10, 2),",
+						"          fecha_pago = toDate(fecha_pago, 'yyyy-MM-dd'),",
+						"          estado_pago = initCap(trim(estado_pago)),",
+						"          canal_pago = iif(isNull(canal_pago), toString(null()), initCap(trim(canal_pago))),",
+						"          nro_comprobante = iif(isNull(nro_comprobante), toString(null()), trim(nro_comprobante))) ~> limpiezaBjaPagos",
+						"limpiezaBjaPagos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_pagos',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPagos"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_bja_partos')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeBjaPartos"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasBjaPartos"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaBjaPartos"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          parto_id as string,",
+						"          ci_madre as string,",
+						"          ci_recien_nacido as string,",
+						"          establecimiento_id as string,",
+						"          fecha_parto as string,",
+						"          tipo_parto as string,",
+						"          peso_nacimiento_kg as string,",
+						"          talla_nacimiento_cm as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'bja_partos',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPartos",
+						"sourceBronzeBjaPartos derive(parto_id = toInteger(parto_id),",
+						"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
+						"          ci_recien_nacido = trim(ci_recien_nacido),",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          fecha_parto = toDate(fecha_parto, 'yyyy-MM-dd'),",
+						"          tipo_parto = iif(isNull(tipo_parto), toString(null()), initCap(trim(tipo_parto))),",
+						"          peso_nacimiento_kg = toDecimal(peso_nacimiento_kg, 5, 2),",
+						"          talla_nacimiento_cm = iif(isNull(talla_nacimiento_cm), toDecimal(null()), toDecimal(talla_nacimiento_cm, 5, 2))) ~> limpiezaBjaPartos",
+						"limpiezaBjaPartos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'bja_partos',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPartos"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_plata_segip_personas')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -991,7 +1451,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_inscripciones')]",
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_boletas')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1003,7 +1463,7 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sourceBronzeBjaInscripciones"
+							"name": "sourceBronzeSupBoletas"
 						}
 					],
 					"sinks": [
@@ -1012,21 +1472,21 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sinkPlatasBjaInscripciones"
+							"name": "sinkPlatasSupBoletas"
 						}
 					],
 					"transformations": [
 						{
-							"name": "limpiezaBjaInscripciones"
+							"name": "limpiezaSupBoletas"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          inscripcion_id as string,",
+						"          boleta_id as string,",
+						"          control_id as string,",
 						"          ci_beneficiaria as string,",
-						"          establecimiento_id as string,",
-						"          fecha_inscripcion as string,",
-						"          semana_gestacion as string,",
+						"          nro_boleta as string,",
+						"          fecha_emision as string,",
 						"          estado as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
@@ -1034,27 +1494,27 @@
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'bronce',",
-						"     tableName: 'bja_inscripciones',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaInscripciones",
-						"sourceBronzeBjaInscripciones derive(inscripcion_id = toInteger(inscripcion_id),",
-						"          ci_beneficiaria = trim(ci_beneficiaria),",
-						"          establecimiento_id = toInteger(establecimiento_id),",
-						"          fecha_inscripcion = toDate(fecha_inscripcion, 'yyyy-MM-dd'),",
-						"          semana_gestacion = toInteger(semana_gestacion),",
-						"          estado = initCap(trim(estado))) ~> limpiezaBjaInscripciones",
-						"limpiezaBjaInscripciones sink(allowSchemaDrift: true,",
+						"     tableName: 'sup_boletas',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupBoletas",
+						"sourceBronzeSupBoletas derive(boleta_id = toInteger(boleta_id),",
+						"          control_id = toInteger(control_id),",
+						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+						"          nro_boleta = trim(nro_boleta),",
+						"          fecha_emision = coalesce(toDate(fecha_emision,'yyyy-MM-dd'), toDate(fecha_emision,'MM/dd/yyyy'), toDate(fecha_emision,'dd/MM/yyyy')),",
+						"          estado = trim(upper(estado))) ~> limpiezaSupBoletas",
+						"limpiezaSupBoletas sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'plata',",
-						"     tableName: 'bja_inscripciones',",
+						"     tableName: 'sup_boletas',",
 						"     insertable: true,",
 						"     updateable: false,",
 						"     deletable: false,",
 						"     upsertable: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaInscripciones"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupBoletas"
 					]
 				}
 			},
@@ -1063,7 +1523,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_controles_prenatales')]",
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_catalogo_paquetes')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1075,7 +1535,7 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sourceBronzeBjaControlesPrenatales"
+							"name": "sourceBronzeSupCatalogoPaquetes"
 						}
 					],
 					"sinks": [
@@ -1084,55 +1544,123 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sinkPlatasBjaControlesPrenatales"
+							"name": "sinkPlatasSupCatalogoPaquetes"
 						}
 					],
 					"transformations": [
 						{
-							"name": "limpiezaBjaControlesPrenatales"
+							"name": "limpiezaSupCatalogoPaquetes"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          control_prenatal_id as string,",
+						"          paquete_id as string,",
+						"          nombre as string,",
+						"          contenido as string,",
+						"          peso_estandar_kg as string,",
+						"          costo_estimado_bs as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'sup_catalogo_paquetes',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupCatalogoPaquetes",
+						"sourceBronzeSupCatalogoPaquetes derive(paquete_id = toInteger(paquete_id),",
+						"          nombre = initCap(trim(nombre)),",
+						"          contenido = trim(contenido),",
+						"          peso_estandar_kg = toDecimal(peso_estandar_kg, 5, 2),",
+						"          costo_estimado_bs = toDecimal(costo_estimado_bs, 10, 2)) ~> limpiezaSupCatalogoPaquetes",
+						"limpiezaSupCatalogoPaquetes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'sup_catalogo_paquetes',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupCatalogoPaquetes"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_controles')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeSupControles"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaSupControles"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          control_id as string,",
 						"          ci_beneficiaria as string,",
 						"          establecimiento_id as string,",
 						"          nro_control as string,",
 						"          fecha_control as string,",
 						"          semana_gestacion as string,",
 						"          peso_madre_kg as string,",
-						"          presion_arterial as string,",
-						"          resultado as string",
+						"          presion_arterial as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'bronce',",
-						"     tableName: 'bja_controles_prenatales',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaControlesPrenatales",
-						"sourceBronzeBjaControlesPrenatales derive(control_prenatal_id = toInteger(control_prenatal_id),",
+						"     tableName: 'sup_controles',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupControles",
+						"sourceBronzeSupControles derive(control_id = toInteger(control_id),",
 						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
 						"          establecimiento_id = toInteger(establecimiento_id),",
 						"          nro_control = toInteger(nro_control),",
-						"          fecha_control = iif(isNull(fecha_control), toDate(null()), toDate(fecha_control, 'yyyy-MM-dd')),",
+						"          fecha_control = coalesce(toDate(fecha_control,'yyyy-MM-dd'), toDate(fecha_control,'MM/dd/yyyy'), toDate(fecha_control,'dd/MM/yyyy')),",
 						"          semana_gestacion = iif(isNull(semana_gestacion), toInteger(null()), toInteger(semana_gestacion)),",
 						"          peso_madre_kg = iif(isNull(peso_madre_kg), toDecimal(null()), toDecimal(peso_madre_kg, 5, 2)),",
-						"          presion_arterial = iif(isNull(presion_arterial), toString(null()), trim(presion_arterial)),",
-						"          resultado = iif(isNull(resultado), toString(null()), initCap(trim(resultado)))) ~> limpiezaBjaControlesPrenatales",
-						"limpiezaBjaControlesPrenatales sink(allowSchemaDrift: true,",
+						"          presion_arterial = iif(isNull(presion_arterial), toString(null()), trim(presion_arterial))) ~> limpiezaSupControles",
+						"limpiezaSupControles sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'plata',",
-						"     tableName: 'bja_controles_prenatales',",
+						"     tableName: 'sup_controles',",
 						"     insertable: true,",
 						"     updateable: false,",
 						"     deletable: false,",
 						"     upsertable: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaControlesPrenatales"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 					]
 				}
 			},
@@ -1141,7 +1669,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_partos')]",
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_entregas')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1153,7 +1681,7 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sourceBronzeBjaPartos"
+							"name": "sourceBronzeSupEntregas"
 						}
 					],
 					"sinks": [
@@ -1162,209 +1690,57 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sinkPlatasBjaPartos"
+							"name": "sinkPlatasSupEntregas"
 						}
 					],
 					"transformations": [
 						{
-							"name": "limpiezaBjaPartos"
+							"name": "limpiezaSupEntregas"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          parto_id as string,",
-						"          ci_madre as string,",
-						"          ci_recien_nacido as string,",
-						"          establecimiento_id as string,",
-						"          fecha_parto as string,",
-						"          tipo_parto as string,",
-						"          peso_nacimiento_kg as string,",
-						"          talla_nacimiento_cm as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table',",
-						"     store: 'sqlserver',",
-						"     schemaName: 'bronce',",
-						"     tableName: 'bja_partos',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPartos",
-						"sourceBronzeBjaPartos derive(parto_id = toInteger(parto_id),",
-						"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
-						"          ci_recien_nacido = trim(ci_recien_nacido),",
-						"          establecimiento_id = toInteger(establecimiento_id),",
-						"          fecha_parto = toDate(fecha_parto, 'yyyy-MM-dd'),",
-						"          tipo_parto = iif(isNull(tipo_parto), toString(null()), initCap(trim(tipo_parto))),",
-						"          peso_nacimiento_kg = toDecimal(peso_nacimiento_kg, 5, 2),",
-						"          talla_nacimiento_cm = iif(isNull(talla_nacimiento_cm), toDecimal(null()), toDecimal(talla_nacimiento_cm, 5, 2))) ~> limpiezaBjaPartos",
-						"limpiezaBjaPartos sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table',",
-						"     store: 'sqlserver',",
-						"     schemaName: 'plata',",
-						"     tableName: 'bja_partos',",
-						"     insertable: true,",
-						"     updateable: false,",
-						"     deletable: false,",
-						"     upsertable: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPartos"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_controles_pediatricos')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "LS_Destino_DWH",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sourceBronzeBjaControlesPediatricos"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "LS_Destino_DWH",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sinkPlatasBjaControlesPediatricos"
-						}
-					],
-					"transformations": [
-						{
-							"name": "limpiezaBjaControlesPediatricos"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          control_pediatrico_id as string,",
-						"          ci_nino as string,",
-						"          ci_madre as string,",
-						"          establecimiento_id as string,",
-						"          nro_control as string,",
-						"          fecha_control as string,",
-						"          peso_nino_kg as string,",
-						"          talla_nino_cm as string,",
-						"          vacuna_aplicada as string,",
-						"          resultado as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table',",
-						"     store: 'sqlserver',",
-						"     schemaName: 'bronce',",
-						"     tableName: 'bja_controles_pediatricos',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaControlesPediatricos",
-						"sourceBronzeBjaControlesPediatricos derive(control_pediatrico_id = toInteger(control_pediatrico_id),",
-						"          ci_nino = regexReplace(trim(ci_nino), '-', ''),",
-						"          ci_madre = regexReplace(trim(ci_madre), '-', ''),",
-						"          establecimiento_id = toInteger(establecimiento_id),",
-						"          nro_control = toInteger(nro_control),",
-						"          fecha_control = toDate(fecha_control, 'yyyy-MM-dd'),",
-						"          peso_nino_kg = iif(isNull(peso_nino_kg), toDecimal(null()), toDecimal(peso_nino_kg, 5, 2)),",
-						"          talla_nino_cm = iif(isNull(talla_nino_cm), toDecimal(null()), toDecimal(talla_nino_cm, 5, 2)),",
-						"          vacuna_aplicada = iif(isNull(vacuna_aplicada), toString(null()), initCap(trim(vacuna_aplicada))),",
-						"          resultado = iif(isNull(resultado), toString(null()), initCap(trim(resultado)))) ~> limpiezaBjaControlesPediatricos",
-						"limpiezaBjaControlesPediatricos sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table',",
-						"     store: 'sqlserver',",
-						"     schemaName: 'plata',",
-						"     tableName: 'bja_controles_pediatricos',",
-						"     insertable: true,",
-						"     updateable: false,",
-						"     deletable: false,",
-						"     upsertable: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaControlesPediatricos"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_pagos')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "LS_Destino_DWH",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sourceBronzeBjaPagos"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "LS_Destino_DWH",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sinkPlatasBjaPagos"
-						}
-					],
-					"transformations": [
-						{
-							"name": "limpiezaBjaPagos"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          pago_id as string,",
+						"          entrega_id as string,",
+						"          boleta_id as string,",
 						"          ci_beneficiaria as string,",
-						"          concepto_pago as string,",
-						"          monto_bs as string,",
-						"          fecha_pago as string,",
-						"          estado_pago as string,",
-						"          canal_pago as string,",
-						"          nro_comprobante as string",
+						"          establecimiento_id as string,",
+						"          paquete_id as string,",
+						"          paquete_nombre as string,",
+						"          fecha_entrega as string,",
+						"          lote_produccion as string,",
+						"          peso_paquete_kg as string,",
+						"          fecha_proxima_entrega as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'bronce',",
-						"     tableName: 'bja_pagos',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaPagos",
-						"sourceBronzeBjaPagos derive(pago_id = toInteger(pago_id),",
+						"     tableName: 'sup_entregas',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupEntregas",
+						"sourceBronzeSupEntregas derive(entrega_id = toInteger(entrega_id),",
+						"          boleta_id = toInteger(boleta_id),",
 						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
-						"          concepto_pago = initCap(trim(concepto_pago)),",
-						"          monto_bs = toDecimal(monto_bs, 10, 2),",
-						"          fecha_pago = toDate(fecha_pago, 'yyyy-MM-dd'),",
-						"          estado_pago = initCap(trim(estado_pago)),",
-						"          canal_pago = iif(isNull(canal_pago), toString(null()), initCap(trim(canal_pago))),",
-						"          nro_comprobante = iif(isNull(nro_comprobante), toString(null()), trim(nro_comprobante))) ~> limpiezaBjaPagos",
-						"limpiezaBjaPagos sink(allowSchemaDrift: true,",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          paquete_id = toInteger(paquete_id),",
+						"          paquete_nombre = initCap(trim(paquete_nombre)),",
+						"          fecha_entrega = coalesce(toDate(fecha_entrega,'yyyy-MM-dd'), toDate(fecha_entrega,'MM/dd/yyyy'), toDate(fecha_entrega,'dd/MM/yyyy')),",
+						"          lote_produccion = iif(isNull(lote_produccion), toString(null()), trim(lote_produccion)),",
+						"          peso_paquete_kg = iif(isNull(peso_paquete_kg), toDecimal(null()), toDecimal(peso_paquete_kg, 5, 2)),",
+						"          fecha_proxima_entrega = iif(isNull(fecha_proxima_entrega), toDate(null()), coalesce(toDate(fecha_proxima_entrega,'yyyy-MM-dd'), toDate(fecha_proxima_entrega,'MM/dd/yyyy'), toDate(fecha_proxima_entrega,'dd/MM/yyyy')))) ~> limpiezaSupEntregas",
+						"limpiezaSupEntregas sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'plata',",
-						"     tableName: 'bja_pagos',",
+						"     tableName: 'sup_entregas',",
 						"     insertable: true,",
 						"     updateable: false,",
 						"     deletable: false,",
 						"     upsertable: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaPagos"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupEntregas"
 					]
 				}
 			},
@@ -1373,7 +1749,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_plata_bja_establecimientos')]",
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_establecimientos')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1385,7 +1761,7 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sourceBronzeBjaEstablecimientos"
+							"name": "sourceBronzeSupEstablecimientos"
 						}
 					],
 					"sinks": [
@@ -1394,12 +1770,12 @@
 								"referenceName": "LS_Destino_DWH",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sinkPlatasBjaEstablecimientos"
+							"name": "sinkPlatasSupEstablecimientos"
 						}
 					],
 					"transformations": [
 						{
-							"name": "limpiezaBjaEstablecimientos"
+							"name": "limpiezaSupEstablecimientos"
 						}
 					],
 					"scriptLines": [
@@ -1419,9 +1795,9 @@
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'bronce',",
-						"     tableName: 'bja_establecimientos',",
-						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeBjaEstablecimientos",
-						"sourceBronzeBjaEstablecimientos derive(establecimiento_id = toInteger(establecimiento_id),",
+						"     tableName: 'sup_establecimientos',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupEstablecimientos",
+						"sourceBronzeSupEstablecimientos derive(establecimiento_id = toInteger(establecimiento_id),",
 						"          codigo_snis = trim(upper(codigo_snis)),",
 						"          nombre = initCap(trim(nombre)),",
 						"          tipo = initCap(trim(tipo)),",
@@ -1429,20 +1805,92 @@
 						"          municipio = initCap(trim(municipio)),",
 						"          departamento = initCap(trim(departamento)),",
 						"          red_salud = iif(isNull(red_salud), toString(null()), initCap(trim(red_salud))),",
-						"          estado = initCap(trim(estado))) ~> limpiezaBjaEstablecimientos",
-						"limpiezaBjaEstablecimientos sink(allowSchemaDrift: true,",
+						"          estado = initCap(trim(estado))) ~> limpiezaSupEstablecimientos",
+						"limpiezaSupEstablecimientos sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'table',",
 						"     store: 'sqlserver',",
 						"     schemaName: 'plata',",
-						"     tableName: 'bja_establecimientos',",
+						"     tableName: 'sup_establecimientos',",
 						"     insertable: true,",
 						"     updateable: false,",
 						"     deletable: false,",
 						"     upsertable: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasBjaEstablecimientos"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupEstablecimientos"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Destino_DWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_plata_sup_inscripciones')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceBronzeSupInscripciones"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_Destino_DWH",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkPlatasSupInscripciones"
+						}
+					],
+					"transformations": [
+						{
+							"name": "limpiezaSupInscripciones"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          inscripcion_id as string,",
+						"          ci_beneficiaria as string,",
+						"          establecimiento_id as string,",
+						"          fecha_inscripcion as string,",
+						"          semana_gestacion as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'bronce',",
+						"     tableName: 'sup_inscripciones',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceBronzeSupInscripciones",
+						"sourceBronzeSupInscripciones derive(inscripcion_id = toInteger(inscripcion_id),",
+						"          ci_beneficiaria = regexReplace(trim(ci_beneficiaria), '-', ''),",
+						"          establecimiento_id = toInteger(establecimiento_id),",
+						"          fecha_inscripcion = toDate(fecha_inscripcion, 'yyyy-MM-dd'),",
+						"          semana_gestacion = toInteger(semana_gestacion),",
+						"          estado = initCap(trim(estado))) ~> limpiezaSupInscripciones",
+						"limpiezaSupInscripciones sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'plata',",
+						"     tableName: 'sup_inscripciones',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinkPlatasSupInscripciones"
 					]
 				}
 			},
