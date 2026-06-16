@@ -1,0 +1,68 @@
+{
+	"name": "df_gold_dim_paquete",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourcePlataPaquetes"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldDimPaquete"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Paquetes"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          paquete_id as integer,",
+				"          nombre as string,",
+				"          contenido as string,",
+				"          peso_estandar_kg as decimal(5,2),",
+				"          costo_estimado_bs as decimal(10,2)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'sup_catalogo_paquetes',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourcePlataPaquetes",
+				"sourcePlataPaquetes aggregate(groupBy(paquete_id),",
+				"     nombre = first(nombre),",
+				"          contenido = first(contenido),",
+				"          peso_estandar_kg = first(peso_estandar_kg),",
+				"          costo_estimado_bs = first(costo_estimado_bs)) ~> Paquetes",
+				"Paquetes sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'oro',",
+				"     tableName: 'Dim_Paquete',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkGoldDimPaquete"
+			]
+		}
+	}
+}
