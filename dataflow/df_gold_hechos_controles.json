@@ -1,0 +1,92 @@
+{
+	"name": "df_gold_hechos_controles",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourcePlataControlesBJA"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldHechosControles"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ContrlesBJA"
+				},
+				{
+					"name": "ContorlBJADV"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          control_prenatal_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as integer,",
+				"          nro_control as integer,",
+				"          fecha_control as date,",
+				"          semana_gestacion as integer,",
+				"          peso_madre_kg as decimal(5,2),",
+				"          presion_arterial as string,",
+				"          resultado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_controles_prenatales',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourcePlataControlesBJA",
+				"sourcePlataControlesBJA aggregate(groupBy(control_prenatal_id),",
+				"     ci_beneficiaria = first(ci_beneficiaria),",
+				"          establecimiento_id = first(establecimiento_id),",
+				"          fecha_control = first(fecha_control),",
+				"          nro_control = first(nro_control),",
+				"          semana_gestacion = first(semana_gestacion),",
+				"          peso_madre_kg = first(peso_madre_kg),",
+				"          presion_arterial = first(presion_arterial),",
+				"          resultado = first(resultado)) ~> ContrlesBJA",
+				"ContrlesBJA derive(sistema = 'BJA') ~> ContorlBJADV",
+				"ContorlBJADV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'oro',",
+				"     tableName: 'Hechos_Controles',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          control_prenatal_id,",
+				"          ci_beneficiaria,",
+				"          establecimiento_id,",
+				"          fecha_control,",
+				"          nro_control,",
+				"          semana_gestacion,",
+				"          peso_madre_kg,",
+				"          presion_arterial,",
+				"          resultado,",
+				"          sistema",
+				"     )) ~> sinkGoldHechosControles"
+			]
+		}
+	}
+}
