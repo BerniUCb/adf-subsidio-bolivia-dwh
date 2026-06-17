@@ -1,0 +1,84 @@
+{
+	"name": "df_gold_hechos_entregas",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourcePlataEntregas"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldHechosEntregas"
+				}
+			],
+			"transformations": [
+				{
+					"name": "entregasio"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          entrega_id as integer,",
+				"          boleta_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as integer,",
+				"          paquete_id as integer,",
+				"          paquete_nombre as string,",
+				"          fecha_entrega as date,",
+				"          lote_produccion as string,",
+				"          peso_paquete_kg as decimal(5,2),",
+				"          fecha_proxima_entrega as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'sup_entregas',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourcePlataEntregas",
+				"sourcePlataEntregas aggregate(groupBy(entrega_id),",
+				"     ci_beneficiaria = first(ci_beneficiaria),",
+				"          establecimiento_id = first(establecimiento_id),",
+				"          paquete_id = first(paquete_id),",
+				"          fecha_entrega = first(fecha_entrega),",
+				"          lote_produccion = first(lote_produccion),",
+				"          peso_paquete_kg = first(peso_paquete_kg)) ~> entregasio",
+				"entregasio sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'oro',",
+				"     tableName: 'Hechos_Entregas',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          entrega_id,",
+				"          ci_beneficiaria,",
+				"          id_establecimiento = establecimiento_id,",
+				"          id_paquete = paquete_id,",
+				"          id_fecha = fecha_entrega,",
+				"          lote_produccion,",
+				"          peso_paquete_kg",
+				"     )) ~> sinkGoldHechosEntregas"
+			]
+		}
+	}
+}
