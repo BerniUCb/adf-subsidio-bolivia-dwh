@@ -1,0 +1,82 @@
+{
+	"name": "df_gold_hechos_pagos",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourcePlatasPagos"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_Destino_DWH",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldHechosPagos"
+				}
+			],
+			"transformations": [
+				{
+					"name": "bjapagos"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          pago_id as integer,",
+				"          ci_beneficiaria as string,",
+				"          concepto_pago as string,",
+				"          monto_bs as decimal(10,2),",
+				"          fecha_pago as date,",
+				"          estado_pago as string,",
+				"          canal_pago as string,",
+				"          nro_comprobante as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'plata',",
+				"     tableName: 'bja_pagos',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourcePlatasPagos",
+				"sourcePlatasPagos aggregate(groupBy(pago_id),",
+				"     ci_beneficiaria = first(ci_beneficiaria),",
+				"          fecha_pago = first(fecha_pago),",
+				"          concepto_pago = first(concepto_pago),",
+				"          monto_bs = first(monto_bs),",
+				"          estado_pago = first(estado_pago),",
+				"          canal_pago = first(canal_pago)) ~> bjapagos",
+				"bjapagos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'oro',",
+				"     tableName: 'Hechos_Pagos',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          pago_id,",
+				"          ci_beneficiaria,",
+				"          id_fecha = fecha_pago,",
+				"          concepto_pago,",
+				"          monto_bs,",
+				"          estado_pago,",
+				"          canal_pago",
+				"     )) ~> sinkGoldHechosPagos"
+			]
+		}
+	}
+}
